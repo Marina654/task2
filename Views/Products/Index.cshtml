@@ -1,0 +1,130 @@
+﻿@model ProductBag
+
+@{
+    ViewData["Title"] = "Products";
+}
+
+@section Scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#btnName").on("click", function () {
+                $("#SortBy").val("Name");
+                if ($("#SortOrder").val() === "" || $("#SortOrder").val() == "desc") {
+                    $("#SortOrder").val("asc");
+                } else {
+                    $("#SortOrder").val("desc");
+                }
+                $("form").get(0).submit();
+            });
+
+            $("#btnPrice").on("click", function () {
+                $("#SortBy").val("Price");
+                if ($("#SortOrder").val() === "" || $("#SortOrder").val() == "desc") {
+                    $("#SortOrder").val("asc");
+                } else {
+                    $("#SortOrder").val("desc");
+                }
+                $("form").get(0).submit();
+            });
+
+            $(".pgn-btn").on("click", function () {
+                $("#Page").val($(this).val());
+                $("form").get(0).submit();
+            });
+        });
+
+    </script>
+}
+
+<h1>Products</h1>
+<div>
+    <form asp-action="Index">
+        <div class="form-group">
+            <label class="control-label">Category:</label>
+            <select asp-for="SelectedCategory" class="form-control">
+                <option value="">Select category</option>
+                <option value="1">Unknown</option>
+                <option value="2">Drink</option>
+                <option value="3">Food</option>
+            </select>
+        </div>
+
+        <input asp-for="SortBy" type="hidden" class="form-control" />
+        <input asp-for="SortOrder" type="hidden" class="form-control" />
+        <input asp-for="Page" type="hidden" class="form-control" />
+        <input asp-for="PageSize" type="hidden" class="form-control" />
+
+        <div class="form-group">
+            <input type="submit" value="Search" class="btn btn-primary" />
+        </div>
+    </form>
+</div>
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                <a href="#" id="btnName">@Html.DisplayName("Name")</a>
+            </th>
+            <th>
+                @Html.DisplayName("Description")
+            </th>
+            <th>
+                <a href="#" id="btnPrice">@Html.DisplayName("Price")</a>
+            </th>
+            <th>
+                @Html.DisplayName("Category")
+            </th>
+            <th>
+                @Html.DisplayName("PictureLink")
+            </th>
+            <th>
+                @Html.DisplayName("CreatedDate")
+            </th>
+            <th>
+                @Html.DisplayName("ModifiedDate")
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Products)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Description)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Price)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Category)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PictureLink)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CreatedDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ModifiedDate)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.ProductId">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.ProductId">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.ProductId">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@for (int i = 0; i < (Model.TotalProductCount + Model.PageSize - 1) / Model.PageSize; i++)
+{
+    <input value="@(i+1)" class="pgn-btn" type="button"/>
+}
